@@ -24,13 +24,13 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+app.set('trust proxy', 1);
 app.use(helmet());
 
 const allowedOrigins = [
   process.env.CLIENT_URL || 'http://localhost:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:5173',
-  'http://127.0.0.1:3000'
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
 ];
 
 app.use(
@@ -39,7 +39,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(null, true);
+        callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
@@ -67,8 +67,8 @@ app.use('/api', limiter);
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'online',
-    businessName: process.env.BUSINESS_NAME || 'Grand Delights Catering Services',
-    location: process.env.BUSINESS_LOCATION || 'Cebu City, Philippines',
+    businessName: process.env.BUSINESS_NAME || 'CaterTrack',
+    location: process.env.BUSINESS_LOCATION || 'Ormoc City, Leyte',
     timestamp: new Date().toISOString()
   });
 });
